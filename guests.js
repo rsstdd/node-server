@@ -18,7 +18,33 @@ if (cmd === 'read') {
 
     console.log(guests);
   });
+} else if (cmd === 'create') {
+  fs.readFile(guestsPath, 'utf8', (readErr, data) => {
+    if (readErr) {
+      throw readErr;
+    }
+
+    const guests = JSON.parse(data);
+    const guest = process.argv[3];
+
+    if (!guest) {
+      console.error(`Usage ${node} ${title} ${cmd} GUEST_NAME`);
+      process.exit(1);
+    }
+
+    guests.push(guest);
+
+    const guestsJSON = JSON.stringify(guests);
+
+    fs.writeFile(guestsPath, guestsJSON, (writeErr) => { //path/data/callback
+      if (writeErr) {
+        throw writeErr;
+
+        console.log(guest);
+      }
+    });
+  });
 } else {
-  console.error(`Usage: ${node} ${title} read`);
+  console.error(`Usage: ${node} ${title} [read | create]`);
   process.exit(1); //exit strategy - anything non-zero
 }
