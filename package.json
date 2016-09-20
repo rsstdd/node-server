@@ -1,0 +1,19 @@
+{
+  "name": "party",
+  "version": "1.0.0",
+  "description": "Node HTTP Server tutorial",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsstdd/node-server.git"
+  },
+  "author": "Ross Todd <rosstod@gmail.com>",
+  "license": "ISC",
+  "engines": {
+    "node": "6.6.0"
+  }
+}
