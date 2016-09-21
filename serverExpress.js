@@ -6,10 +6,14 @@ const port = process.env.PORT || 8000;
 
 app.disable('x-powered-by');
 
-app.use((req, res) => {
+app.get('/guests', (req, res) => {
   const guests = ['something', 'yep', 'now', 'yes'];
   res.send(guests);
-});
+}); 
+
+app.use((req, res) => {
+  res.sendStatus(404);
+})
 
 app.listen(port, () => {
   console.log(`Listening on port: ${port}`);
