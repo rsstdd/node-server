@@ -13,12 +13,25 @@ const morgan = require('morgan');
 app.disable('x-powered-by');
 app.use(morgan('short'));
 
-// app.use((req, res, next) => {
-//   const start = new Date();
-//   next();
-//   const end = new Date();
-//   console.log(req.method, req.url, res.statusCode, end - start, 'ms');
-// });
+app.use((req, res, next) => {
+  let bodyJSON = '';
+
+  req.on('data', (chunk) => {
+    bodyJSON += chunk.toString();
+  });
+
+  req.on('end', () => {
+    let body;
+
+    if (bodyJSON !== '') {
+      body = JSON.parse(bodyJSON);
+    }
+
+    req.body = body;
+
+    next();
+  });
+});
 
 app.get('/guests', (req, res) => {
   fs.readFile(guestsPath, 'utf8', (err, guestsJSON) => {
@@ -31,6 +44,38 @@ app.get('/guests', (req, res) => {
 
     res.send(guests);
   })
+});
+
+app.post('/guests', (req, res) => {
+  fs.readFile(guestsPath, 'utf8', (readErr, guestsJSON) => {
+    if (readErr) {
+      console.error(readErr);
+
+      return res.sendStatus(500);
+    }
+
+    const guests = JSON.parse(guestsJSON);
+    const guest = req.body.name;
+
+    if(!guest) {
+      return res.sendStatus(400);
+    }
+
+    guests.push(guest);
+
+    const newGuestsJSON = JSON.stringify(guests);
+
+    fs.writeFile(guestsPath, newGuestsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr);
+
+        return res.sendStatus(500);
+      }
+
+      res.set('Content-Type', 'text/plain');
+      res.send(guest);
+    });
+  });
 });
 
 app.get('/guests/:id', (req, res) => {
