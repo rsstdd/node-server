@@ -8,7 +8,17 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8000;
 
+const morgan = require('morgan');
+
 app.disable('x-powered-by');
+app.use(morgan('short'));
+
+// app.use((req, res, next) => {
+//   const start = new Date();
+//   next();
+//   const end = new Date();
+//   console.log(req.method, req.url, res.statusCode, end - start, 'ms');
+// });
 
 app.get('/guests', (req, res) => {
   fs.readFile(guestsPath, 'utf8', (err, guestsJSON) => {
@@ -34,7 +44,7 @@ app.get('/guests/:id', (req, res) => {
     const guests = JSON.parse(guestsJSON);
 
     if (id < 0 || id >= guests.length || Number.isNaN(id)) {
-      return res.sendStatus(404);
+      return res.sendStatus(404); // return exits the fn
     }
 
     res.set('Content-Type', 'text/plain');
