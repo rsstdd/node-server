@@ -9,29 +9,11 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 app.disable('x-powered-by');
 app.use(morgan('short'));
-
-app.use((req, res, next) => {
-  let bodyJSON = '';
-
-  req.on('data', (chunk) => {
-    bodyJSON += chunk.toString();
-  });
-
-  req.on('end', () => {
-    let body;
-
-    if (bodyJSON !== '') {
-      body = JSON.parse(bodyJSON);
-    }
-
-    req.body = body;
-
-    next();
-  });
-});
+app.use(bodyParser.json());
 
 app.get('/guests', (req, res) => {
   fs.readFile(guestsPath, 'utf8', (err, guestsJSON) => {
